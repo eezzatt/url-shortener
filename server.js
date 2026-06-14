@@ -1,8 +1,13 @@
 const express = require('express')
 const app = express()
 const pool = require('./db')
+const cors = require('cors')
+const authRoutes = require('./auth')
+const authenticateToken = require('./middleware')
 
 app.use(express.json())
+app.use(cors())
+app.use('/api', authRoutes)
 
 app.get('/', (req, res) => {
     res.send('URL shortener API is running.')
@@ -12,13 +17,14 @@ app.listen(3000, () => {
     console.log('Server running on http://localhost:3000')
 })
 
-const urlDatabase = {}
-
 function generateShortCode(){
     return Math.random().toString(36).substring(2,8)
 }
 
-app.post('/shorten', async (req, res) => {
+app.post('/shorten', authenticateToken, async (req, res) => {
+
+    console.log("Request received:", req.body)
+
     try {
         const { url } = req.body
 
@@ -31,6 +37,8 @@ app.post('/shorten', async (req, res) => {
             'INSERT INTO urls (shortcode, original_url) VALUES ($1, $2)',
             [shortcode, url]
         )
+
+        console.log("Sending response:", { shortcode, url })
 
         res.json({
             shortcode: shortcode,
