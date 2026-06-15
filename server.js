@@ -42,7 +42,7 @@ app.post('/shorten', authenticateToken, async (req, res) => {
 
         res.json({
             shortcode: shortcode,
-            shortURL: `http://localhost:3000/${shortcode}`,
+            shortURL: `${process.env.BASE_URL}/${shortcode}`,
             originalURL: url
         })
     }
