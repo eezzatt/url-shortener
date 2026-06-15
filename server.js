@@ -47,6 +47,7 @@ app.post('/shorten', authenticateToken, async (req, res) => {
         })
     }
     catch (err) {
+        console.log(err)
         res.status(500).json({ error: 'Something went wrong' })
     }
     
@@ -67,6 +68,7 @@ app.get('/:shortcode', async (req, res) => {
         res.redirect(rows[0].original_url)
     }
     catch (err) {
+        console.log(err)
         res.status(500).json({ error: 'Something went wrong' })
     }
 })

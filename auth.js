@@ -24,6 +24,7 @@ router.post('/register', async (req, res) => {
         res.status(201).json({ user: result.rows[0] })
     }
     catch (err) {
+        console.log(err)
         if (err.code === '23505') {
             return res.status(409).json({ error: 'Email already registered' })
         }
@@ -65,6 +66,7 @@ router.post('/login', async (req, res) => {
         res.json({ token })
     }
     catch (err) {
+        console.log(err)
         res.status(500).json({ error: 'Something went wrong' })
     }
 })
