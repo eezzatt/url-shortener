@@ -9,63 +9,78 @@ function App() {
   const [token, setToken] = useState(null)
 
   const handleShorten = async () => {
-    setError(null)
-    setResult(null)
+    try {
+      setError(null)
+      setResult(null)
 
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/shorten`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ url })
-    })
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/shorten`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ url })
+      })
 
-    const data = await response.json()
+      const data = await response.json()
 
-    if (!response.ok) {
-      setError(data.error)
+      if (!response.ok) {
+        setError(data.error)
+      }
+      else {
+        setResult(data.shortURL)
+      }
     }
-    else {
-      setResult(data.shortURL)
+    catch (err) {
+      setError(err.message)
     }
   }
 
   const handleLogin = async () => {
-    setError(null)
+    try {
+      setError(null)
 
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json"},
-      body: JSON.stringify({ email, password })
-    })
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({ email, password })
+      })
 
-    const data = await response.json()
+      const data = await response.json()
 
-    if (!response.ok) {
-      setError(data.error)
+      if (!response.ok) {
+        setError(data.error)
+      }
+      else {
+        setToken(data.token)
+      }
     }
-    else {
-      setToken(data.token)
+    catch (err) {
+      setError(err.message)
     }
   }
 
   const handleRegister = async () => {
-    setError(null)
+    try {
+      setError(null)
 
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json"},
-      body: JSON.stringify({ email, password})
-    })
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({ email, password})
+      })
 
-    const data = await response.json()
+      const data = await response.json()
 
-    if (!response.ok) {
-      setError(data.error)
+      if (!response.ok) {
+        setError(data.error)
+      }
+      else {
+        setToken(data.token)
+      }
     }
-    else {
-      handleLogin()
+    catch (err) {
+      setError(err.message)
     }
   }
 
