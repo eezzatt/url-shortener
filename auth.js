@@ -11,24 +11,30 @@ router.post('/register', async (req, res) => {
         const {email, password} = req.body
 
         if (!email || !password) {
-            res.status(400).json({error: 'Email and password are required'})
+            return res.status(400).json({error: 'Email and password are required'})
         }
 
         const passwordHash = await bcrypt.hash(password, 10)
 
         const result  = await pool.query (
-            'INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email',
+            'INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id',
             [email, passwordHash]
         )
 
-        res.status(201).json({ user: result.rows[0] })
+        const token = jwt.sign(
+            { userId: result.rows[0].id },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        )
+
+        return res.json({ token })
     }
     catch (err) {
         console.log(err)
         if (err.code === '23505') {
             return res.status(409).json({ error: 'Email already registered' })
         }
-        res.status(500).json({ error: 'Something went wrong' })
+        return res.status(500).json({ error: 'Something went wrong' })
     }
 })
 
@@ -37,7 +43,7 @@ router.post('/login', async (req, res) => {
         const {email, password} = req.body
 
         if (!email || !password) {
-            res.status(400).json({ error: 'Email and password are required'})
+            return res.status(400).json({ error: 'Email and password are required'})
         }
 
         const result = await pool.query (
@@ -48,13 +54,13 @@ router.post('/login', async (req, res) => {
         const user = result.rows[0]
 
         if (!user) {
-            res.status(401).json({ error: 'Invalid email or password' })
+            return res.status(401).json({ error: 'Invalid email or password' })
         }
 
         const validPassword = await bcrypt.compare(password, user.password_hash)
 
         if (!validPassword) {
-            res.status(401).json({ error: 'Invalid email or password' })
+            return res.status(401).json({ error: 'Invalid email or password' })
         }
 
         const token = jwt.sign(
@@ -63,11 +69,11 @@ router.post('/login', async (req, res) => {
             { expiresIn: '1h' }
         )
 
-        res.json({ token })
+        return res.json({ token })
     }
     catch (err) {
         console.log(err)
-        res.status(500).json({ error: 'Something went wrong' })
+        return res.status(500).json({ error: 'Something went wrong' })
     }
 })
 
