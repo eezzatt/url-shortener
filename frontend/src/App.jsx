@@ -1,4 +1,5 @@
 import { useState } from "react"
+import "./App.css"
 
 function App() {
   const [url, setUrl] = useState("")
@@ -85,37 +86,41 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="app">
       {token ? 
-        (<div>
+        (<div className="card">
           <h1>URL Shortener</h1>
           <input
+            className="input"
             type="text"
             placeholder="Enter a URL"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
           />
-          <button onClick={handleShorten}>Shorten</button>
-          {result && <p>Short URL: <a href={result}>{result}</a></p>}
-          {error && <p>Error: {error}</p>}
+          <button className='btn 'onClick={handleShorten}>Shorten</button>
+          {result && <p className="result">Short URL: <a href={result}>{result}</a></p>}
+          {error && <p className="error">Error: {error}</p>}
+          <button className="btn btn-logout" onClick={() => setToken(null)}>Log out</button>
         </div>) : (
-          <div>
+          <div className="card">
             <h1>Login/Register</h1>
             <input
+              className="input"
               type="text"
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <input
+              className="input"
               type="password"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <button onClick={handleLogin}>Login</button>
-            <button onClick={handleRegister}>Register</button>
-            {error && <p>Error: {error}</p>}
+            <button className="btn" onClick={handleLogin}>Login</button>
+            <button className="btn" onClick={handleRegister}>Register</button>
+            {error && <p className="error">Error: {error}</p>}
           </div>
         )
       }
